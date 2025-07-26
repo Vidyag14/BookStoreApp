@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Return - Bookstore</title>
+  <style>
+   body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+  }
+
+  nav {
+    background: rgba(44, 62, 80, 0.8);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  nav h1 {
+    color: #ecf0f1;
+    margin: 0;
+    font-size: 1.7rem;
+  }
+
+  nav a {
+    color: #ecf0f1;
+    margin-left: 1.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  nav a:hover {
+    color: #f1c40f;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 3rem auto;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+    font-size: 2rem;
+  }
+
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  form input, form select, form textarea {
+    padding: 0.85rem;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    outline: none;
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  form button {
+    grid-column: 1 / -1;
+    padding: 0.9rem;
+    border: none;
+    background: #2c3e50;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+  }
+
+  form button:hover {
+    background: #34495e;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 10px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  table, th, td {
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  th, td {
+    padding: 0.75rem;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  #sortContainer {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    max-width: 1000px;
+    margin: 2rem auto 0 auto;
+    padding: 1rem 2rem;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  }
+
+  #sortContainer label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  #sortContainer select {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  </style>
+</head>
+<body>
+<nav>
+  <h1>Bookstore</h1>
+  <div>
+    <a href="add_book.html">Add Book</a>
+    <a href="book_issued.html">Book Issue</a>
+    <a href="book_return.html">Book Return</a>
+    <a href="book_available.html">Book Available</a>
+    <a href="best_seller.html">Best seller</a>
+  </div>
+</nav>
+
+<div id="sortContainer">
+  <label for="sortBy">Sort By:</label>
+  <select id="sortBy">
+    <option value="returnType">Return Type</option>
+    <option value="userName">User Name</option>
+    <option value="dateOfIssue">Date of Issue</option>
+  </select>
+</div>
+
+<div class="container">
+  <h2>Return a Book</h2>
+  <form id="returnForm">
+    <input type="number" id="bookId" placeholder="Book ID" required/>
+    <input type="text" id="bookName" placeholder="Book Name" readonly required/>
+    <input type="text" id="authorName" placeholder="Author Name" readonly required/>
+    <input type="text" id="userName" placeholder="User Name" required/>
+    <input type="tel" id="contact1" placeholder="Contact Number 1" pattern="[0-9]{10}" required/>
+    <input type="tel" id="contact2" placeholder="Contact Number 2" pattern="[0-9]{10}" required/>
+    <input type="email" id="email" placeholder="Email" required/>
+    <textarea id="address" placeholder="Address" rows="3" required></textarea>
+    <input type="date" id="dateOfIssue" required/>
+    <select id="returnType" required>
+      <option value="">Select Return Type</option>
+      <option value="Late Return">Late Return</option>
+      <option value="On-time Return">On-time Return</option>
+      <option value="Damaged Return">Damaged Return</option>
+    </select>
+    <select id="returnCondition" required>
+      <option value="">Select Return Condition</option>
+      <option value="Good">Good</option>
+      <option value="Damaged">Damaged</option>
+      <option value="Lost">Lost</option>
+    </select>
+    <input type="number" id="copies" placeholder="Number of Copies" min="1" value="1" required/>
+    <button type="submit">Return Book</button>
+  </form>
+
+  <div id="tablesContainer"></div>
+</div>
+
+<script>
+  const books = JSON.parse(localStorage.getItem('books')) || [];
+  let issuedBooksById = JSON.parse(localStorage.getItem('issuedBooksById')) || {};
+
+  window.editIssued = function(bookId, index) {
+    const book = issuedBooksById[bookId][index];
+    document.getElementById('bookId').value = book.bookId;
+    document.getElementById('bookName').value = book.bookName;
+    document.getElementById('authorName').value = book.authorName;
+    document.getElementById('userName').value = book.userName;
+    document.getElementById('contact1').value = book.contact1;
+    document.getElementById('contact2').value = book.contact2;
+    document.getElementById('email').value = book.email;
+    document.getElementById('address').value = book.address;
+    document.getElementById('dateOfIssue').value = book.dateOfIssue;
+    document.getElementById('returnType').value = book.returnType;
+    document.getElementById('returnCondition').value = book.returnCondition;
+    document.getElementById('copies').value = book.copies || 1;
+    issuedBooksById[bookId].splice(index, 1);
+    localStorage.setItem('issuedBooksById', JSON.stringify(issuedBooksById));
+    renderIssuedTables();
+  };
+
+  window.deleteIssued = function(bookId, index) {
+    issuedBooksById[bookId].splice(index, 1);
+    localStorage.setItem('issuedBooksById', JSON.stringify(issuedBooksById));
+    renderIssuedTables();
+  };
+
+  document.getElementById('userName').addEventListener('blur', function() {
+    const userNameInput = this.value.trim();
+    if (!userNameInput) return;
+
+    let foundRecord;
+    for (const records of Object.values(issuedBooksById)) {
+      foundRecord = records.find(r => r.userName.toLowerCase() === userNameInput.toLowerCase());
+      if (foundRecord) break;
+    }
+
+    if (foundRecord) {
+      document.getElementById('contact1').value = foundRecord.contact1 || '';
+      document.getElementById('contact2').value = foundRecord.contact2 || '';
+      document.getElementById('email').value = foundRecord.email || '';
+      document.getElementById('address').value = foundRecord.address || '';
+    } else {
+      alert('User not found!');
+    }
+  });
+
+  document.getElementById('bookId').addEventListener('blur', function() {
+    const idInput = this.value.trim();
+    if (!idInput) return;
+
+    const book = books.find(b => b.id == idInput);
+    if (book) {
+      document.getElementById('bookName').value = book.name || '';
+      document.getElementById('authorName').value = book.author || '';
+    } else {
+      document.getElementById('bookName').value = '';
+      document.getElementById('authorName').value = '';
+      alert('Book ID not found!');
+    }
+  });
+
+  document.getElementById('returnForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const bookId = document.getElementById('bookId').value;
+    const bookName = document.getElementById('bookName').value;
+    const authorName = document.getElementById('authorName').value;
+    const userName = document.getElementById('userName').value;
+    const contact1 = document.getElementById('contact1').value;
+    const contact2 = document.getElementById('contact2').value;
+    const email = document.getElementById('email').value;
+    const address = document.getElementById('address').value;
+    const dateOfIssue = document.getElementById('dateOfIssue').value;
+    const returnType = document.getElementById('returnType').value;
+    const returnCondition = document.getElementById('returnCondition').value;
+    const copies = document.getElementById('copies').value;
+
+    const returned = { bookId, bookName, authorName, userName, contact1, contact2, email, address, dateOfIssue, returnType, returnCondition, copies };
+    if (!issuedBooksById[bookId]) issuedBooksById[bookId] = [];
+    issuedBooksById[bookId].push(returned);
+    localStorage.setItem('issuedBooksById', JSON.stringify(issuedBooksById));
+    renderIssuedTables();
+    this.reset();
+  });
+
+  document.getElementById('sortBy').addEventListener('change', function() {
+    renderIssuedTables();
+  });
+
+  function renderIssuedTables() {
+    const sortBy = document.getElementById('sortBy').value;
+    const container = document.getElementById('tablesContainer');
+    container.innerHTML = '';
+    const entries = Object.entries(issuedBooksById);
+
+    entries.forEach(([bookId, records]) => {
+      records.sort((a, b) => {
+        if (a[sortBy] < b[sortBy]) return -1;
+        if (a[sortBy] > b[sortBy]) return 1;
+        return 0;
+      });
+      const book = books.find(b => b.id == bookId);
+      const caption = book ? `<strong>Book ID: ${bookId} - ${book.name} by ${book.author}</strong>` : `Book ID: ${bookId}`;
+      const table = document.createElement('table');
+      table.innerHTML = `
+        <caption>${caption}</caption>
+        <thead>
+          <tr>
+            <th>User Name</th>
+            <th>Contact 1</th>
+            <th>Contact 2</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>Return Type</th>
+            <th>Return Condition</th>
+            <th>Date of Issue</th>
+            <th>Copies</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      `;
+      const tbody = table.querySelector('tbody');
+      records.forEach((record, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${record.userName}</td>
+          <td>${record.contact1}</td>
+          <td>${record.contact2}</td>
+          <td>${record.email}</td>
+          <td>${record.address}</td>
+          <td>${record.returnType}</td>
+          <td>${record.returnCondition}</td>
+          <td>${record.dateOfIssue || ''}</td>
+          <td>${record.copies || 1}</td>
+          <td>
+            <button onclick="editIssued('${bookId}', ${index})">Edit</button>
+            <button onclick="deleteIssued('${bookId}', ${index})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+      container.appendChild(table);
+    });
+  }
+
+  renderIssuedTables();
+</script>
+</body>
+</html>

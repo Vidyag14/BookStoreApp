@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookstore - Add Book</title>
+  <style>
+    /* [Same styles as before, unchanged] */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+    }
+    nav {
+      background: rgba(44, 62, 80, 0.8);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    nav h1 {
+      color: #ecf0f1;
+      margin: 0;
+      font-size: 1.7rem;
+    }
+    nav a {
+      color: #ecf0f1;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #f1c40f;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      backdrop-filter: blur(25px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      font-size: 2rem;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    form input, form select {
+      padding: 0.85rem;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      outline: none;
+      font-size: 1rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    form button {
+      grid-column: 1 / -1;
+      padding: 0.9rem;
+      border: none;
+      background: #2c3e50;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s;
+    }
+    form button:hover {
+      background: #34495e;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    table, th, td {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    #sortContainer {
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      max-width: 1000px;
+      margin: 2rem auto 0 auto;
+      padding: 1rem 2rem;
+      text-align: center;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    #sortContainer label {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    #sortContainer select {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    img.book-thumb {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <h1>Bookstore</h1>
+    <div>
+      <a href="add_book.html">Add Book</a>
+      <a href="book_issued.html">Book Issue</a>
+      <a href="book_return.html">Book Return</a>
+      <a href="book_available.html">Book Available</a>
+      <a href="best_seller.html">Best Seller</a>
+    </div>
+  </nav>
+
+  <div id="sortContainer">
+    <label for="sortBy">Sort by:</label>
+    <select id="sortBy" onchange="sortBooks()">
+      <option value="">-- Select --</option>
+      <option value="isbn_asc">ISBN No (Asc)</option>
+      <option value="isbn_desc">ISBN No (Desc)</option>
+      <option value="title_asc">Title (Asc)</option>
+      <option value="title_desc">Title (Desc)</option>
+      <option value="author_asc">Author (Asc)</option>
+      <option value="author_desc">Author (Desc)</option>
+      <option value="category_asc">Category (Asc)</option>
+      <option value="category_desc">Category (Desc)</option>
+      <option value="price_asc">Price (Asc)</option>
+      <option value="price_desc">Price (Desc)</option>
+      <option value="stock_asc">Stock (Asc)</option>
+      <option value="stock_desc">Stock (Desc)</option>
+    </select>
+  </div>
+
+  <div class="container">
+    <h2>Add Book</h2>
+    <form onsubmit="event.preventDefault(); insertBook();">
+      <input type="number" id="isbn" placeholder="ISBN No" min="0" required>
+      <input type="text" id="title" placeholder="Title" required>
+      <input type="text" id="author" placeholder="Author" required>
+      <input type="text" id="category" placeholder="Category" required>
+      <input type="number" id="price" placeholder="Price" min="0" required>
+      <input type="number" id="stock" placeholder="Stock" min="0" required>
+      <input type="file" id="image" accept="image/*">
+      <button type="submit">Insert Book</button>
+    </form>
+
+    <table id="bookTable">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>ISBN No</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Inserted At</th>
+          <th>Last Edited</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+ 
+<script>
+  const table = document.getElementById("bookTable").getElementsByTagName('tbody')[0];
+  let editingIsbn = null;
+
+  function insertBook() {
+    const isbn = document.getElementById("isbn").value.trim();
+    const title = document.getElementById("title").value.trim();
+    const author = document.getElementById("author").value.trim();
+    const category = document.getElementById("category").value.trim();
+    const price = document.getElementById("price").value.trim();
+    const stock = document.getElementById("stock").value.trim();
+    const imageFile = document.getElementById("image").files[0];
+
+    if (!isbn || !title || !author || !category || price === "" || stock === "") {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    if (parseFloat(isbn) < 0 || parseFloat(price) < 0 || parseFloat(stock) < 0) {
+      alert("ISBN, Price, and Stock cannot be negative.");
+      return;
+    }
+
+    const books = JSON.parse(localStorage.getItem("books") || "[]");
+
+    if (!editingIsbn && books.some(book => book.isbn === isbn)) {
+      alert("Book with ISBN " + isbn + " already exists.");
+      return;
+    }
+
+    function insertSorted(book, booksArray) {
+      let inserted = false;
+      for (let i = 0; i < booksArray.length; i++) {
+        if (parseInt(book.isbn) < parseInt(booksArray[i].isbn)) {
+          booksArray.splice(i, 0, book);
+          inserted = true;
+          break;
+        }
+      }
+      if (!inserted) {
+        booksArray.push(book);
+      }
+    }
+
+    function saveAndUpdate(imageUrl) {
+      const now = new Date().toLocaleString();
+      const existingIndex = books.findIndex(book => book.isbn === editingIsbn);
+      let insertedAt = now;
+      let editedAt = "-";
+
+      if (editingIsbn && existingIndex !== -1) {
+        insertedAt = books[existingIndex].insertedAt;
+        books.splice(existingIndex, 1); // Remove old book before re-inserting
+        editedAt = now;
+      }
+
+      const updatedBook = {
+        isbn, title, author, category, price, stock, imageUrl,
+        insertedAt,
+        editedAt
+      };
+
+      insertSorted(updatedBook, books);
+      localStorage.setItem("books", JSON.stringify(books));
+      refreshTable();
+      resetForm();
+      editingIsbn = null;
+    }
+
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        saveAndUpdate(e.target.result);
+      };
+      reader.readAsDataURL(imageFile);
+    } else {
+      const oldBook = books.find(book => book.isbn === editingIsbn);
+      if (oldBook) {
+        saveAndUpdate(oldBook.imageUrl);
+      } else {
+        saveAndUpdate(""); // no image
+      }
+    }
+  }
+
+  function addBookToTable(book) {
+    const newRow = table.insertRow();
+    const imageCell = newRow.insertCell();
+    const image = document.createElement("img");
+    image.className = "book-thumb";
+    image.src = book.imageUrl || "";
+    imageCell.appendChild(image);
+
+    newRow.insertCell().innerText = book.isbn;
+    newRow.insertCell().innerText = book.title;
+    newRow.insertCell().innerText = book.author;
+    newRow.insertCell().innerText = book.category;
+    newRow.insertCell().innerText = book.price;
+    newRow.insertCell().innerText = book.stock;
+    newRow.insertCell().innerText = book.insertedAt || "-";
+    newRow.insertCell().innerText = book.editedAt || "-";
+
+    const actionCell = newRow.insertCell();
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "Delete";
+    deleteBtn.className = "action-btn delete-btn";
+    deleteBtn.onclick = function () {
+      const time = new Date().toLocaleString();
+      if (confirm(`Delete book "${book.title}" (ISBN: ${book.isbn})?\nTime: ${time}`)) {
+        deleteBook(book.isbn, newRow);
+      }
+    };
+    actionCell.appendChild(deleteBtn);
+
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.className = "action-btn edit-btn";
+    editBtn.onclick = function () {
+      document.getElementById("isbn").value = book.isbn;
+      document.getElementById("title").value = book.title;
+      document.getElementById("author").value = book.author;
+      document.getElementById("category").value = book.category;
+      document.getElementById("price").value = book.price;
+      document.getElementById("stock").value = book.stock;
+      editingIsbn = book.isbn;
+      alert("Edit the details and click Insert to update the book.");
+    };
+    actionCell.appendChild(editBtn);
+  }
+
+  function resetForm() {
+    document.getElementById("isbn").value = "";
+    document.getElementById("title").value = "";
+    document.getElementById("author").value = "";
+    document.getElementById("category").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("stock").value = "";
+    document.getElementById("image").value = "";
+  }
+
+  function deleteBook(isbn, row) {
+    let books = JSON.parse(localStorage.getItem("books") || "[]");
+    books = books.filter(book => book.isbn !== isbn);
+    localStorage.setItem("books", JSON.stringify(books));
+    table.removeChild(row);
+  }
+
+  function sortBooks() {
+    const selected = document.getElementById("sortBy").value;
+    if (!selected) return;
+    const [key, direction] = selected.split("_");
+    const books = JSON.parse(localStorage.getItem("books") || "[]");
+    books.sort((a, b) => {
+      let valA = key === "price" || key === "stock" || key === "isbn" ? parseFloat(a[key]) : a[key].toLowerCase();
+      let valB = key === "price" || key === "stock" || key === "isbn" ? parseFloat(b[key]) : b[key].toLowerCase();
+      return direction === "asc" ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+    });
+    refreshTable(books);
+  }
+
+  function refreshTable(books = null) {
+    while (table.firstChild) table.removeChild(table.firstChild);
+    (books || JSON.parse(localStorage.getItem("books") || "[]")).forEach(book => addBookToTable(book));
+  }
+
+  window.onload = () => refreshTable();
+</script>
+
+
+</body>
+</html>

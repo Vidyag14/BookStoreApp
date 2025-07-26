@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Available Books - Bookstore</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://images.unsplash.com/photo-1589998059171-988d887df646?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      filter: brightness(1.3);
+    }
+
+    nav {
+      background: rgba(44, 62, 80, 0.8);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    nav h1 {
+      color: #ecf0f1;
+      margin: 0;
+      font-size: 1.7rem;
+    }
+
+    nav a {
+      color: #ecf0f1;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #f1c40f;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 3rem auto;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      backdrop-filter: blur(25px) saturate(180%);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      font-size: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    table, th, td {
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    th {
+      background: #2c3e50;
+      color: #fff;
+    }
+
+    tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <h1>📚 Bookstore</h1>
+    <div>
+      <a href="add_book.html">Add Book</a>
+      <a href="book_issued.html">Book Issued</a>
+      <a href="book_return.html">Book Return</a>
+      <a href="book_available.html">Available Books</a>
+      <a href="best_seller.html">Best Seller</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>Books Available</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Book ID</th>
+          <th>Book Name</th>
+          <th>Author</th>
+          <th>Price</th>
+          <th>Available Copies</th>
+        </tr>
+      </thead>
+      <tbody id="booksTableBody">
+        <!-- Available books will be listed here -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const booksTableBody = document.getElementById('booksTableBody');
+
+    const books = JSON.parse(localStorage.getItem('books')) || [];
+    const issuedBooksById = JSON.parse(localStorage.getItem('issuedBooksById')) || {};
+
+    function getAvailableCopies(book) {
+      const totalCopies = parseInt(book.copies) || 0;
+
+      const issuedRecords = issuedBooksById[book.id] || [];
+      let issuedCount = 0;
+      let returnedCount = 0;
+
+      issuedRecords.forEach(record => {
+        const copies = parseInt(record.copies) || 1;
+
+        if (record.returnType && record.returnCondition) {
+          // Considered returned if has return details
+          returnedCount += copies;
+        } else {
+          issuedCount += copies;
+        }
+      });
+
+      // Total available = total - issued + returned
+      let available = totalCopies - issuedCount + returnedCount;
+
+      if (available < 0) available = 0;
+      return available;
+    }
+
+    function renderAvailableBooks() {
+      booksTableBody.innerHTML = '';
+
+      const availableBooks = books.filter(book => getAvailableCopies(book) > 0);
+
+      if (availableBooks.length === 0) {
+        booksTableBody.innerHTML = `<tr><td colspan="5">No available books. All are issued or none added yet.</td></tr>`;
+      } else {
+        availableBooks.forEach(book => {
+          const availableCopies = getAvailableCopies(book);
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${book.bookId || book.id}</td>
+            <td>${book.name}</td>
+            <td>${book.author}</td>
+            <td>₹${parseFloat(book.price).toFixed(2)}</td>
+            <td>${availableCopies}</td>
+          `;
+          booksTableBody.appendChild(row);
+        });
+      }
+    }
+
+    renderAvailableBooks();
+  </script>
+
+</body>
+</html>
